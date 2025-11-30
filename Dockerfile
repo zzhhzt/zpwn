@@ -68,62 +68,17 @@ bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft=
 # Enable mouse drag to select and copy
 bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' "send-keys -M" "copy-mode -eM"
 EOF
-    # Configure vim with Chinese encoding support
-    cat > /home/zpwn/.vimrc << 'EOF'
-" Vim configuration with Chinese encoding support
-" Set encoding
-set encoding=utf-8
-set termencoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,gbk,gb2312,gb18030,big5
-
-" Display settings
-set ambiwidth=double
-set formatoptions+=mM
-set nobackup
-set noswapfile
-
-" Syntax highlighting
-syntax on
-set hlsearch
-set incsearch
-
-" Line numbers
-set number
-set relativenumber
-
-" Indentation
-set autoindent
-set smartindent
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set smarttab
-
-" Visual settings
-set ruler
-set laststatus=2
-set showcmd
-set wildmenu
-set wildmode=list:longest
-
-" Chinese specific settings
-set guifont=Courier\ New:h12
-if has('gui_running')
-    set guioptions+=a
-endif
-EOF
+    # Configure vim with Chinese encoding support using printf for better compatibility
+    printf '" Vim configuration with Chinese encoding support\n" Set encoding\nset encoding=utf-8\nset termencoding=utf-8\nset fileencoding=utf-8\nset fileencodings=utf-8,gbk,gb2312,gb18030,big5\n\n" Display settings\nset ambiwidth=double\nset formatoptions+=mM\nset nobackup\nset noswapfile\n\n" Syntax highlighting\nsyntax on\nset hlsearch\nset incsearch\n\n" Line numbers\nset number\nset relativenumber\n\n" Indentation\nset autoindent\nset smartindent\nset tabstop=4\nset shiftwidth=4\nset expandtab\nset smarttab\n\n" Visual settings\nset ruler\nset laststatus=2\nset showcmd\nset wildmenu\nset wildmode=list:longest\n\n" Chinese specific settings\nset guifont=Courier\\ New:h12\nif has('"'"'gui_running'"'"')\n    set guioptions+=a\nendif\n' > /home/zpwn/.vimrc
     cp /home/zpwn/.vimrc /root/.vimrc && \
     chown zpwn:zpwn /home/zpwn/.vimrc && \
     # Create global vim configuration for all users
-    cat > /etc/vim/vimrc.local << 'EOF'
-" Global vim configuration for Chinese encoding support
-set encoding=utf-8
-set termencoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8,gbk,gb2312,gb18030,big5
-set ambiwidth=double
-EOF
+    echo '" Global vim configuration for Chinese encoding support' > /etc/vim/vimrc.local && \
+    echo 'set encoding=utf-8' >> /etc/vim/vimrc.local && \
+    echo 'set termencoding=utf-8' >> /etc/vim/vimrc.local && \
+    echo 'set fileencoding=utf-8' >> /etc/vim/vimrc.local && \
+    echo 'set fileencodings=utf-8,gbk,gb2312,gb18030,big5' >> /etc/vim/vimrc.local && \
+    echo 'set ambiwidth=double' >> /etc/vim/vimrc.local
     cp /home/zpwn/.tmux.conf /root/.tmux.conf && \
     echo "#!/bin/sh\nservice ssh restart\nsleep infinity" > /root/start.sh && \
     chmod +x /root/start.sh
@@ -207,15 +162,13 @@ RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove ht
     git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb && \
     git clone https://github.com/matrix1001/glibc-all-in-one.git /opt/glibc-all-in-one && \
     cd /opt/glibc-all-in-one && python3 update_list && \
-    # GDB Configuration using heredoc for cleaner output
-    cat > /root/.gdbinit << 'EOF'
-source /opt/pwndbg/gdbinit.py
-source /opt/Pwngdb/pwngdb.py
-source /opt/Pwngdb/angelheap/gdbinit.py
-define hook-run
-python import angelheap
-end
-EOF
+    # GDB Configuration using echo for better compatibility
+    echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
+    echo 'source /opt/Pwngdb/pwngdb.py' >> /root/.gdbinit && \
+    echo 'source /opt/Pwngdb/angelheap/gdbinit.py' >> /root/.gdbinit && \
+    echo 'define hook-run' >> /root/.gdbinit && \
+    echo 'python import angelheap' >> /root/.gdbinit && \
+    echo 'end' >> /root/.gdbinit
     # Final setup and permissions
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
     chown zpwn:zpwn /home/zpwn/.gdbinit && \
