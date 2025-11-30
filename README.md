@@ -8,6 +8,7 @@
 - **Python工具**: pwntools, ropper, z3-solver, angr 等
 - **Ruby工具**: one_gadget, seccomp-tools
 - **调试器**: gdb-multiarch + pwndbg + Pwngdb
+- **终端复用**: tmux (已启用鼠标支持)
 - **多版本glibc**: 2.19-2.36 (32/64位)
 - **环境**: Zsh + Oh-My-Zsh, Python虚拟环境
 
@@ -69,6 +70,24 @@ ssh root@localhost -p 2222
 ```
 
 ### 工具使用示例
+
+#### tmux终端复用器 (已启用鼠标支持)
+```bash
+# 启动tmux会话
+tmux
+
+# 鼠标操作功能:
+# - 点击切换面板
+# - 滚动查看历史输出
+# - 拖拽选择文本复制
+# - 调整面板大小
+
+# 常用快捷键:
+# Ctrl+b c      # 创建新窗口
+# Ctrl+b "      # 水平分割面板
+# Ctrl+b %      # 垂直分割面板
+# Ctrl+b 方向键  # 切换面板
+```
 
 #### pwntools使用
 ```python

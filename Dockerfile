@@ -53,10 +53,21 @@ RUN rm -f /etc/service/sshd/down && \
     echo "zpwn:${ZPWN_PASSWORD}" | chpasswd && \
     echo "zpwn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# 3. Python Venv and Startup Script (Combined)
+# 3. Python Venv, Tmux Configuration and Startup Script (Combined)
 RUN python3 -m venv /pip_venv && \
     chown -R zpwn:zpwn /pip_venv && \
     echo "\n\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.bashrc && \
+    # Configure tmux with mouse support
+    echo "# Tmux configuration with mouse support" > /home/zpwn/.tmux.conf && \
+    echo "set -g mouse on" >> /home/zpwn/.tmux.conf && \
+    echo "set -g mode-keys vi" >> /home/zpwn/.tmux.conf && \
+    echo "set -g history-limit 10000" >> /home/zpwn/.tmux.conf && \
+    echo "setw -g mouse on" >> /home/zpwn/.tmux.conf && \
+    echo "# Enable mouse scrolling" >> /home/zpwn/.tmux.conf && \
+    echo "bind -n WheelUpPane if-shell -F -t = \"#{mouse_any_flag}\" \"send-keys -M\" \"if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'\"" >> /home/zpwn/.tmux.conf && \
+    echo "# Enable mouse drag to select and copy" >> /home/zpwn/.tmux.conf && \
+    echo "bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' \"send-keys -M\" \"copy-mode -eM\"" >> /home/zpwn/.tmux.conf && \
+    cp /home/zpwn/.tmux.conf /root/.tmux.conf && \
     echo "#!/bin/sh\nservice ssh restart\nsleep infinity" > /root/start.sh && \
     chmod +x /root/start.sh
 
