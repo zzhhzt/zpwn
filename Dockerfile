@@ -172,7 +172,8 @@ COPY --from=skysider/glibc_builder32:2.36 /glibc/2.36/32 /glibc/2.36/32
 # -----------------------------------------------------------------------------
 # 4. Install Tools and Final Configuration (Fully Optimized)
 # -----------------------------------------------------------------------------
-RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove https://rubygems.org/ && \
+RUN gem sources --clear-all && \
+    gem sources --add https://gems.ruby-china.com/ && \
     gem install one_gadget seccomp-tools && \
     rm -rf /var/lib/gems/*/cache/* && \
     /pip_venv/bin/pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple && \
