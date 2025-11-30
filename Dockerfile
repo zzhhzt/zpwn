@@ -41,8 +41,7 @@ RUN dpkg --add-architecture i386 && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # 2. SSH and User Configuration (Combined)
-RUN rm -f /etc/service/sshd/down && \
-    sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     sed -ri 's/#UseDNS\ no/UseDNS\ no/g' /etc/ssh/sshd_config && \
     sed -ri "s/StrictModes yes/StrictModes no/g" /etc/ssh/sshd_config && \
     sed -ri "s/UsePAM yes/UsePAM no/g" /etc/ssh/sshd_config && \
@@ -51,7 +50,7 @@ RUN rm -f /etc/service/sshd/down && \
     groupmod -n zpwn ubuntu && \
     echo "root:${ROOT_PASSWORD}" | chpasswd && \
     echo "zpwn:${ZPWN_PASSWORD}" | chpasswd && \
-    echo "zpwn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "zpwn ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/zpwn-nopasswd
 
 # 3. Python Venv, Tmux Configuration and Startup Script (Optimized)
 RUN python3 -m venv /pip_venv && \
@@ -121,18 +120,21 @@ RUN python3 -m venv /pip_venv && \
     chmod +x /root/start.sh
 
 # -----------------------------------------------------------------------------
-# ZSH Setup (Optimized) - Single RUN for all ZSH operations
+# ZSH Setup (Optimized) - Split into proper USER blocks
 # -----------------------------------------------------------------------------
-RUN -u zpwn bash -c ' \
-        export RUNZSH=no && \
-        export CHSH=no && \
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-        git clone https://github.com/zsh-users/zsh-autosuggestions /home/zpwn/.oh-my-zsh/custom/plugins/zsh-autosuggestions && \
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/zpwn/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
-        sed -i "s/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g" /home/zpwn/.zshrc && \
-        echo "\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.zshrc' && \
-    # Copy Zsh setup to root and configure shells
-    cp -r /home/zpwn/.oh-my-zsh /root/.oh-my-zsh && \
+# Switch to zpwn user for user-level installation
+USER zpwn
+RUN export RUNZSH=no && \
+    export CHSH=no && \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+    git clone https://github.com/zsh-users/zsh-autosuggestions /home/zpwn/.oh-my-zsh/custom/plugins/zsh-autosuggestions && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/zpwn/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
+    sed -i "s/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g" /home/zpwn/.zshrc && \
+    echo "\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.zshrc
+
+# Switch back to root for system-level operations
+USER root
+RUN cp -r /home/zpwn/.oh-my-zsh /root/.oh-my-zsh && \
     cp /home/zpwn/.zshrc /root/.zshrc && \
     sed -i 's|/home/zpwn|/root|g' /root/.zshrc && \
     chsh -s /bin/zsh root && \
