@@ -194,9 +194,7 @@ RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove ht
     pebble \
     r2pipe \
     poetry && \
-    git clone https://github.com/dev2ero/LibcSearcher.git /opt/LibcSearcher && \
-    cd /opt/LibcSearcher && \
-    /pip_venv/bin/python3 setup.py develop && \
+    /pip_venv/bin/pip install --no-cache-dir LibcSearcher && \
     cd / && \
     git clone https://github.com/pwndbg/pwndbg /opt/pwndbg && \
     cd /opt/pwndbg && chmod +x setup.sh && ./setup.sh && \
