@@ -218,7 +218,7 @@ RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove ht
     chown -R zpwn:zpwn /ctf
 
 # Reset WORKDIR to the new ctf work directory
-WORKDIR /ctf/work
+WORKDIR /ctf
 
 CMD ["/root/start.sh"]
 
