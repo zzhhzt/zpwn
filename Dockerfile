@@ -203,9 +203,7 @@ RUN gem sources --clear-all && \
     cd /opt/pwndbg && chmod +x setup.sh && ./setup.sh && \
     cd / && \
     git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb && \
-    git clone https://github.com/matrix1001/glibc-all-in-one.git /opt/glibc-all-in-one && \
-    cd /opt/glibc-all-in-one && python3 update_list && \
-    # GDB Configuration using echo for better compatibility
+      # GDB Configuration using echo for better compatibility
     echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
     echo 'source /opt/Pwngdb/pwngdb.py' >> /root/.gdbinit && \
     echo 'source /opt/Pwngdb/angelheap/gdbinit.py' >> /root/.gdbinit && \
@@ -215,8 +213,7 @@ RUN gem sources --clear-all && \
     # Final setup and permissions
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
     chown zpwn:zpwn /home/zpwn/.gdbinit && \
-    chmod -R 777 /opt/glibc-all-in-one && \
-    chmod -R 755 /glibc && \
+          chmod -R 755 /glibc && \
     mkdir -p /ctf/work && \
     chown -R zpwn:zpwn /ctf
 
