@@ -39,6 +39,3 @@ services:
 networks:
   ctf-dev-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.21.0.0/16

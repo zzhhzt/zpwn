@@ -43,9 +43,6 @@ services:
 networks:
   ctf-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
 # 可选：定义数据卷
 volumes:
