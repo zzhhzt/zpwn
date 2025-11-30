@@ -108,7 +108,7 @@ RUN python3 -m venv /pip_venv && \
     echo 'set guifont=Courier\\ New:h12' >> /home/zpwn/.vimrc && \
     echo 'if has("gui_running")' >> /home/zpwn/.vimrc && \
     echo '    set guioptions+=a' >> /home/zpwn/.vimrc && \
-    echo 'endif' >> /home/zpwn/.vimrc
+    echo 'endif' >> /home/zpwn/.vimrc && \
     cp /home/zpwn/.vimrc /root/.vimrc && \
     chown zpwn:zpwn /home/zpwn/.vimrc && \
     # Create global vim configuration for all users
@@ -117,7 +117,7 @@ RUN python3 -m venv /pip_venv && \
     echo 'set termencoding=utf-8' >> /etc/vim/vimrc.local && \
     echo 'set fileencoding=utf-8' >> /etc/vim/vimrc.local && \
     echo 'set fileencodings=utf-8,gbk,gb2312,gb18030,big5' >> /etc/vim/vimrc.local && \
-    echo 'set ambiwidth=double' >> /etc/vim/vimrc.local
+    echo 'set ambiwidth=double' >> /etc/vim/vimrc.local && \
     cp /home/zpwn/.tmux.conf /root/.tmux.conf && \
     echo "#!/bin/sh\nservice ssh restart\nsleep infinity" > /root/start.sh && \
     chmod +x /root/start.sh
