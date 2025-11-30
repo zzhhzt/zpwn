@@ -13,8 +13,6 @@ ENV LANG=C.UTF-8
 
 # 1. System Setup and Package Installation (Optimized)
 RUN dpkg --add-architecture i386 && \
-    sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/ubuntu.sources && \
-    sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/ubuntu.sources && \
     apt-get -y update && \
     apt-get install -y --no-install-recommends \
     lib32z1 apt-transport-https \
@@ -215,7 +213,7 @@ RUN git clone https://github.com/pwndbg/pwndbg /opt/pwndbg && \
 # Step 4.6: Install Pwngdb
 RUN git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb
 
-# Step 4.7: Configure GDB and set final permissions
+# Step 4.7: Configure GDB
 RUN echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
     echo 'source /opt/Pwngdb/pwngdb.py' >> /root/.gdbinit && \
     echo 'source /opt/Pwngdb/angelheap/gdbinit.py' >> /root/.gdbinit && \
@@ -223,9 +221,10 @@ RUN echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
     echo 'python import angelheap' >> /root/.gdbinit && \
     echo 'end' >> /root/.gdbinit && \
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
-    chown zpwn:zpwn /home/zpwn/.gdbinit && \
-    chmod -R 755 /glibc && \
-    mkdir -p /ctf/work && \
+    chown zpwn:zpwn /home/zpwn/.gdbinit
+
+# Step 4.8: Set final permissions and create work directory
+RUN mkdir -p /ctf/work && \
     chown -R zpwn:zpwn /ctf
 
 # Reset WORKDIR to the new ctf work directory
