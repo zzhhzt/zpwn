@@ -1,0 +1,46 @@
+version: '3.8'
+
+# 开发环境配置
+services:
+  ctf-pwn-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROOT_PASSWORD: ${ROOT_PASSWORD:-dev123}
+        ZPWN_PASSWORD: ${ZPWN_PASSWORD:-dev123}
+    image: ctf-pwn:dev
+    container_name: ctf-pwn-dev
+    hostname: ctf-pwn-dev
+    ports:
+      - "${SSH_PORT:-2223}:22"
+    volumes:
+      # 开发环境挂载更多目录
+      - ./workspace:/ctf/work
+      - ./scripts:/ctf/scripts
+      - ./challenges:/ctf/challenges
+      - ./configs:/ctf/configs
+      # 可选：挂载主机工具目录
+      # - ~/.local/bin:/usr/local/bin-host
+    environment:
+      - TZ=Asia/Shanghai
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+      - DEV_MODE=true
+    networks:
+      - ctf-dev-network
+    # 开发环境自动重启
+    restart: unless-stopped
+    # 开发环境调试配置
+    stdin_open: true
+    tty: true
+    labels:
+      - "ctf.pwn.environment=dev"
+      - "ctf.pwn.version=dev"
+
+networks:
+  ctf-dev-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

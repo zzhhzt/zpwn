@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  ctf-pwn:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROOT_PASSWORD: ${ROOT_PASSWORD:-123456}
+        ZPWN_PASSWORD: ${ZPWN_PASSWORD:-123456}
+        DEBIAN_FRONTEND: noninteractive
+    image: ctf-pwn:latest
+    container_name: ctf-pwn-container
+    hostname: ctf-pwn
+    ports:
+      - "${SSH_PORT:-2222}:22"
+    volumes:
+      # 挂载工作目录
+      - ./workspace:/ctf/work
+      # 可选：挂载自定义脚本目录
+      # - ./scripts:/ctf/scripts
+      # 可选：挂载CTF题目目录
+      # - ./challenges:/ctf/challenges
+    environment:
+      - TZ=Asia/Shanghai
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+    networks:
+      - ctf-network
+    restart: unless-stopped
+    # 可选：限制资源使用
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 4G
+    #       cpus: '2'
+    #     reservations:
+    #       memory: 2G
+    #       cpus: '1'
+    # 可选：添加标签
+    labels:
+      - "ctf.pwn.environment=true"
+      - "ctf.pwn.version=latest"
+
+networks:
+  ctf-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 可选：定义数据卷
+volumes:
+  ctf-workspace:
+    driver: local
+  ctf-challenges:
+    driver: local

@@ -12,48 +12,79 @@
 - **多版本glibc**: 2.19-2.36 (32/64位)
 - **环境**: Zsh + Oh-My-Zsh, Python虚拟环境
 
-## 构建镜像
+## 快速部署
 
-### 使用默认密码构建
+### 方法一：Docker Compose (推荐)
+
 ```bash
-docker build -t ctf-pwn .
+# 1. 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件设置密码和端口
+
+# 2. 启动服务
+docker-compose up -d
+
+# 3. 连接到容器
+ssh zpwn@localhost -p 2222  # 密码在 .env 中设置
 ```
 
-### 使用自定义密码构建
+### 方法二：传统 Docker 命令
+
+#### 构建镜像
 ```bash
+# 使用默认密码构建
+docker build -t ctf-pwn .
+
+# 使用自定义密码构建
 docker build \
   --build-arg ROOT_PASSWORD=your_root_password \
   --build-arg ZPWN_PASSWORD=your_zpwn_password \
   -t ctf-pwn .
 ```
 
-## 运行容器
-
-### 基本运行
+#### 运行容器
 ```bash
+# 基本运行
 docker run -d -p 2222:22 --name ctf-pwn-container ctf-pwn
-```
 
-### 挂载工作目录
-```bash
+# 挂载工作目录
 docker run -d -p 2222:22 \
   -v /path/to/your/ctf/files:/ctf/work \
   --name ctf-pwn-container ctf-pwn
-```
 
-### 完整运行示例
-```bash
-# 创建工作目录
+# 完整示例
 mkdir -p ~/ctf-workspace
-
-# 运行容器并挂载工作目录
 docker run -d -p 2222:22 \
   -v ~/ctf-workspace:/ctf/work \
   --name ctf-pwn ctf-pwn
-
-# 连接到容器
 ssh zpwn@localhost -p 2222
-# 默认密码: 123456 (或你设置的密码)
+# 默认密码: 123456
+```
+
+### Docker Compose 环境配置
+
+#### 生产环境
+```bash
+# 启动生产环境
+docker-compose up -d
+
+# 查看状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+#### 开发环境
+```bash
+# 启动开发环境(不同端口)
+docker-compose -f docker-compose.dev.yml up -d
+
+# 连接开发环境
+ssh zpwn@localhost -p 2223
 ```
 
 ## 容器内使用
@@ -198,5 +229,11 @@ docker run -d -p 2222:22 \
 - GDB: 最新版 + pwndbg + Pwngdb
 
 ## 支持与反馈
+
+## 文档链接
+
+- 📖 [Docker Compose 使用指南](Docker-Compose-使用指南.md) - 详细的Docker Compose配置和使用说明
+- 📋 [CTF Pwn Docker 分析报告](CTF_Pwn_Docker_Analysis.md) - 安全分析和优化建议
+- 📝 [优化总结](优化总结.md) - 构建优化效果总结
 
 如有问题或建议，请提交Issue或Pull Request。
