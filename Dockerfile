@@ -53,38 +53,36 @@ RUN rm -f /etc/service/sshd/down && \
     echo "zpwn:${ZPWN_PASSWORD}" | chpasswd && \
     echo "zpwn ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# 3. Python Venv, Tmux Configuration and Startup Script (Combined)
+# 3. Python Venv, Tmux Configuration and Startup Script (Optimized)
 RUN python3 -m venv /pip_venv && \
     chown -R zpwn:zpwn /pip_venv && \
     echo "\n\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.bashrc && \
-    # Configure tmux with mouse support
-    echo "# Tmux configuration with mouse support" > /home/zpwn/.tmux.conf && \
-    echo "set -g mouse on" >> /home/zpwn/.tmux.conf && \
-    echo "set -g mode-keys vi" >> /home/zpwn/.tmux.conf && \
-    echo "set -g history-limit 10000" >> /home/zpwn/.tmux.conf && \
-    echo "setw -g mouse on" >> /home/zpwn/.tmux.conf && \
-    echo "# Enable mouse scrolling" >> /home/zpwn/.tmux.conf && \
-    echo "bind -n WheelUpPane if-shell -F -t = \"#{mouse_any_flag}\" \"send-keys -M\" \"if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'\"" >> /home/zpwn/.tmux.conf && \
-    echo "# Enable mouse drag to select and copy" >> /home/zpwn/.tmux.conf && \
-    echo "bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' \"send-keys -M\" \"copy-mode -eM\"" >> /home/zpwn/.tmux.conf && \
+    # Configure tmux with mouse support using heredoc
+    cat > /home/zpwn/.tmux.conf << 'EOF'
+# Tmux configuration with mouse support
+set -g mouse on
+set -g mode-keys vi
+set -g history-limit 10000
+setw -g mouse on
+# Enable mouse scrolling
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'"
+# Enable mouse drag to select and copy
+bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' "send-keys -M" "copy-mode -eM"
+EOF
     cp /home/zpwn/.tmux.conf /root/.tmux.conf && \
     echo "#!/bin/sh\nservice ssh restart\nsleep infinity" > /root/start.sh && \
     chmod +x /root/start.sh
 
 # -----------------------------------------------------------------------------
-# ZSH Setup (Optimized)
+# ZSH Setup (Optimized) - Single RUN for all ZSH operations
 # -----------------------------------------------------------------------------
-USER zpwn
-WORKDIR /home/zpwn
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
-    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' ~/.zshrc && \
-    echo "\n# pip venv\nsource /pip_venv/bin/activate" >> ~/.zshrc
-
-USER root
-# Copy Zsh setup to root and configure shells
-RUN cp -r /home/zpwn/.oh-my-zsh /root/.oh-my-zsh && \
+    git clone https://github.com/zsh-users/zsh-autosuggestions /home/zpwn/.oh-my-zsh/custom/plugins/zsh-autosuggestions && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/zpwn/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
+    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' /home/zpwn/.zshrc && \
+    echo "\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.zshrc && \
+    # Copy Zsh setup to root and configure shells
+    cp -r /home/zpwn/.oh-my-zsh /root/.oh-my-zsh && \
     cp /home/zpwn/.zshrc /root/.zshrc && \
     sed -i 's|/home/zpwn|/root|g' /root/.zshrc && \
     chsh -s /bin/zsh root && \
@@ -120,7 +118,7 @@ COPY --from=skysider/glibc_builder64:2.36 /glibc/2.36/64 /glibc/2.36/64
 COPY --from=skysider/glibc_builder32:2.36 /glibc/2.36/32 /glibc/2.36/32
 
 # -----------------------------------------------------------------------------
-# 4. Install Tools (Ruby + Python + GDB Plugins) (Optimized)
+# 4. Install Tools and Final Configuration (Fully Optimized)
 # -----------------------------------------------------------------------------
 RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove https://rubygems.org/ && \
     gem install one_gadget seccomp-tools && \
@@ -153,15 +151,17 @@ RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove ht
     cd / && \
     git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb && \
     git clone https://github.com/matrix1001/glibc-all-in-one.git /opt/glibc-all-in-one && \
-    cd /opt/glibc-all-in-one && python3 update_list
-
-# 5. GDB Configuration and Final Setup (Optimized)
-RUN echo "source /opt/pwndbg/gdbinit.py" > /root/.gdbinit && \
-    echo "source /opt/Pwngdb/pwngdb.py" >> /root/.gdbinit && \
-    echo "source /opt/Pwngdb/angelheap/gdbinit.py" >> /root/.gdbinit && \
-    echo "define hook-run" >> /root/.gdbinit && \
-    echo "python import angelheap" >> /root/.gdbinit && \
-    echo "end" >> /root/.gdbinit && \
+    cd /opt/glibc-all-in-one && python3 update_list && \
+    # GDB Configuration using heredoc for cleaner output
+    cat > /root/.gdbinit << 'EOF'
+source /opt/pwndbg/gdbinit.py
+source /opt/Pwngdb/pwngdb.py
+source /opt/Pwngdb/angelheap/gdbinit.py
+define hook-run
+python import angelheap
+end
+EOF
+    # Final setup and permissions
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
     chown zpwn:zpwn /home/zpwn/.gdbinit && \
     chmod -R 777 /opt/glibc-all-in-one && \
