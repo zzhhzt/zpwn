@@ -56,20 +56,59 @@ RUN rm -f /etc/service/sshd/down && \
 # 3. Python Venv, Tmux Configuration and Startup Script (Optimized)
 RUN python3 -m venv /pip_venv && \
     chown -R zpwn:zpwn /pip_venv && \
-    # Configure tmux with mouse support using heredoc
-    cat > /home/zpwn/.tmux.conf << 'EOF'
-# Tmux configuration with mouse support
-set -g mouse on
-set -g mode-keys vi
-set -g history-limit 10000
-setw -g mouse on
-# Enable mouse scrolling
-bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'copy-mode -e; send-keys -M'"
-# Enable mouse drag to select and copy
-bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' "send-keys -M" "copy-mode -eM"
-EOF
-    # Configure vim with Chinese encoding support using printf for better compatibility
-    printf '" Vim configuration with Chinese encoding support\n" Set encoding\nset encoding=utf-8\nset termencoding=utf-8\nset fileencoding=utf-8\nset fileencodings=utf-8,gbk,gb2312,gb18030,big5\n\n" Display settings\nset ambiwidth=double\nset formatoptions+=mM\nset nobackup\nset noswapfile\n\n" Syntax highlighting\nsyntax on\nset hlsearch\nset incsearch\n\n" Line numbers\nset number\nset relativenumber\n\n" Indentation\nset autoindent\nset smartindent\nset tabstop=4\nset shiftwidth=4\nset expandtab\nset smarttab\n\n" Visual settings\nset ruler\nset laststatus=2\nset showcmd\nset wildmenu\nset wildmode=list:longest\n\n" Chinese specific settings\nset guifont=Courier\\ New:h12\nif has('"'"'gui_running'"'"')\n    set guioptions+=a\nendif\n' > /home/zpwn/.vimrc
+    # Configure tmux with mouse support using echo commands
+    echo '# Tmux configuration with mouse support' > /home/zpwn/.tmux.conf && \
+    echo 'set -g mouse on' >> /home/zpwn/.tmux.conf && \
+    echo 'set -g mode-keys vi' >> /home/zpwn/.tmux.conf && \
+    echo 'set -g history-limit 10000' >> /home/zpwn/.tmux.conf && \
+    echo 'setw -g mouse on' >> /home/zpwn/.tmux.conf && \
+    echo '# Enable mouse scrolling' >> /home/zpwn/.tmux.conf && \
+    echo 'bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}" '"'"'send-keys -M'"'"' "copy-mode -e; send-keys -M"' >> /home/zpwn/.tmux.conf && \
+    echo '# Enable mouse drag to select and copy' >> /home/zpwn/.tmux.conf && \
+    echo 'bind -n DragBorder if-shell -Ft= "#{mouse_any_flag}" "send-keys -M" "copy-mode -eM"' >> /home/zpwn/.tmux.conf
+    # Configure vim with Chinese encoding support using echo commands
+    echo '" Vim configuration with Chinese encoding support' > /home/zpwn/.vimrc && \
+    echo '" Set encoding' >> /home/zpwn/.vimrc && \
+    echo 'set encoding=utf-8' >> /home/zpwn/.vimrc && \
+    echo 'set termencoding=utf-8' >> /home/zpwn/.vimrc && \
+    echo 'set fileencoding=utf-8' >> /home/zpwn/.vimrc && \
+    echo 'set fileencodings=utf-8,gbk,gb2312,gb18030,big5' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Display settings' >> /home/zpwn/.vimrc && \
+    echo 'set ambiwidth=double' >> /home/zpwn/.vimrc && \
+    echo 'set formatoptions+=mM' >> /home/zpwn/.vimrc && \
+    echo 'set nobackup' >> /home/zpwn/.vimrc && \
+    echo 'set noswapfile' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Syntax highlighting' >> /home/zpwn/.vimrc && \
+    echo 'syntax on' >> /home/zpwn/.vimrc && \
+    echo 'set hlsearch' >> /home/zpwn/.vimrc && \
+    echo 'set incsearch' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Line numbers' >> /home/zpwn/.vimrc && \
+    echo 'set number' >> /home/zpwn/.vimrc && \
+    echo 'set relativenumber' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Indentation' >> /home/zpwn/.vimrc && \
+    echo 'set autoindent' >> /home/zpwn/.vimrc && \
+    echo 'set smartindent' >> /home/zpwn/.vimrc && \
+    echo 'set tabstop=4' >> /home/zpwn/.vimrc && \
+    echo 'set shiftwidth=4' >> /home/zpwn/.vimrc && \
+    echo 'set expandtab' >> /home/zpwn/.vimrc && \
+    echo 'set smarttab' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Visual settings' >> /home/zpwn/.vimrc && \
+    echo 'set ruler' >> /home/zpwn/.vimrc && \
+    echo 'set laststatus=2' >> /home/zpwn/.vimrc && \
+    echo 'set showcmd' >> /home/zpwn/.vimrc && \
+    echo 'set wildmenu' >> /home/zpwn/.vimrc && \
+    echo 'set wildmode=list:longest' >> /home/zpwn/.vimrc && \
+    echo '' >> /home/zpwn/.vimrc && \
+    echo '" Chinese specific settings' >> /home/zpwn/.vimrc && \
+    echo 'set guifont=Courier\\ New:h12' >> /home/zpwn/.vimrc && \
+    echo 'if has("gui_running")' >> /home/zpwn/.vimrc && \
+    echo '    set guioptions+=a' >> /home/zpwn/.vimrc && \
+    echo 'endif' >> /home/zpwn/.vimrc
     cp /home/zpwn/.vimrc /root/.vimrc && \
     chown zpwn:zpwn /home/zpwn/.vimrc && \
     # Create global vim configuration for all users
