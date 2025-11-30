@@ -123,11 +123,14 @@ RUN python3 -m venv /pip_venv && \
 # -----------------------------------------------------------------------------
 # ZSH Setup (Optimized) - Single RUN for all ZSH operations
 # -----------------------------------------------------------------------------
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-    git clone https://github.com/zsh-users/zsh-autosuggestions /home/zpwn/.oh-my-zsh/custom/plugins/zsh-autosuggestions && \
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/zpwn/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
-    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g' /home/zpwn/.zshrc && \
-    echo "\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.zshrc && \
+RUN -u zpwn bash -c ' \
+        export RUNZSH=no && \
+        export CHSH=no && \
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+        git clone https://github.com/zsh-users/zsh-autosuggestions /home/zpwn/.oh-my-zsh/custom/plugins/zsh-autosuggestions && \
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting /home/zpwn/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
+        sed -i "s/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/g" /home/zpwn/.zshrc && \
+        echo "\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.zshrc' && \
     # Copy Zsh setup to root and configure shells
     cp -r /home/zpwn/.oh-my-zsh /root/.oh-my-zsh && \
     cp /home/zpwn/.zshrc /root/.zshrc && \
