@@ -16,7 +16,6 @@ RUN dpkg --add-architecture i386 && \
     sed -i 's@//.*archive.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/ubuntu.sources && \
     sed -i 's@//.*security.ubuntu.com@//mirrors.tuna.tsinghua.edu.cn@g' /etc/apt/sources.list.d/ubuntu.sources && \
     apt-get -y update && \
-    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     lib32z1 apt-transport-https \
     python3 python3-pip python3-venv python3-poetry python3-dev python3-setuptools \
@@ -173,7 +172,10 @@ COPY --from=skysider/glibc_builder32:2.36 /glibc/2.36/32 /glibc/2.36/32
 # 4. Install Tools and Final Configuration (Fully Optimized)
 # -----------------------------------------------------------------------------
 RUN gem sources --clear-all && \
-    gem sources --add https://gems.ruby-china.com/ && \
+    gem sources -l && \
+    gem sources --add https://gems.ruby-china.com/ || \
+    gem sources --add https://rubygems.org/ && \
+    gem sources -l && \
     gem install one_gadget seccomp-tools && \
     rm -rf /var/lib/gems/*/cache/* && \
     /pip_venv/bin/pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple && \
