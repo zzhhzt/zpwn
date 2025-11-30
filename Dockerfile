@@ -207,7 +207,7 @@ RUN gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ --remove ht
     echo 'source /opt/Pwngdb/angelheap/gdbinit.py' >> /root/.gdbinit && \
     echo 'define hook-run' >> /root/.gdbinit && \
     echo 'python import angelheap' >> /root/.gdbinit && \
-    echo 'end' >> /root/.gdbinit
+    echo 'end' >> /root/.gdbinit && \
     # Final setup and permissions
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
     chown zpwn:zpwn /home/zpwn/.gdbinit && \
