@@ -56,7 +56,6 @@ RUN rm -f /etc/service/sshd/down && \
 # 3. Python Venv, Tmux Configuration and Startup Script (Optimized)
 RUN python3 -m venv /pip_venv && \
     chown -R zpwn:zpwn /pip_venv && \
-    echo "\n\n# pip venv\nsource /pip_venv/bin/activate" >> /home/zpwn/.bashrc && \
     # Configure tmux with mouse support using heredoc
     cat > /home/zpwn/.tmux.conf << 'EOF'
 # Tmux configuration with mouse support
