@@ -65,7 +65,7 @@ RUN python3 -m venv /pip_venv && \
     echo '# Enable mouse scrolling' >> /home/zpwn/.tmux.conf && \
     echo 'bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}" '"'"'send-keys -M'"'"' "copy-mode -e; send-keys -M"' >> /home/zpwn/.tmux.conf && \
     echo '# Enable mouse drag to select and copy' >> /home/zpwn/.tmux.conf && \
-    echo 'bind -n DragBorder if-shell -Ft= "#{mouse_any_flag}" "send-keys -M" "copy-mode -eM"' >> /home/zpwn/.tmux.conf
+    echo 'bind -n DragBorder if-shell -Ft= "#{mouse_any_flag}" "send-keys -M" "copy-mode -eM"' >> /home/zpwn/.tmux.conf && \
     # Configure vim with Chinese encoding support using echo commands
     echo '" Vim configuration with Chinese encoding support' > /home/zpwn/.vimrc && \
     echo '" Set encoding' >> /home/zpwn/.vimrc && \
