@@ -169,19 +169,25 @@ COPY --from=skysider/glibc_builder64:2.36 /glibc/2.36/64 /glibc/2.36/64
 COPY --from=skysider/glibc_builder32:2.36 /glibc/2.36/32 /glibc/2.36/32
 
 # -----------------------------------------------------------------------------
-# 4. Install Tools and Final Configuration (Fully Optimized)
+# 4. Install Tools and Final Configuration (Restructured for Debugging)
 # -----------------------------------------------------------------------------
+
+# Step 4.1: Configure RubyGems and install Ruby-based tools
+# Uses ruby-china mirror with a fallback to the official one.
 RUN gem sources --clear-all && \
     gem sources -l && \
-    gem sources --add https://gems.ruby-china.com/ || \
-    gem sources --add https://rubygems.org/ && \
+    gem sources --add https://gems.ruby-china.com/ || gem sources --add https://rubygems.org/ && \
     gem sources -l && \
     gem install one_gadget seccomp-tools && \
-    rm -rf /var/lib/gems/*/cache/* && \
-    /pip_venv/bin/pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple && \
+    rm -rf /var/lib/gems/*/cache/*
+
+# Step 4.2: Configure Pip and upgrade it
+RUN /pip_venv/bin/pip config set global.index-url http://pypi.tuna.tsinghua.edu.cn/simple && \
     /pip_venv/bin/pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn && \
-    /pip_venv/bin/pip install -U pip && \
-    /pip_venv/bin/pip install --no-cache-dir \
+    /pip_venv/bin/pip install -U pip
+
+# Step 4.3: Install core Python tools. This is a common failure point.
+RUN /pip_venv/bin/pip install --no-cache-dir \
     setuptools \
     wheel \
     pwntools \
@@ -196,24 +202,29 @@ RUN gem sources --clear-all && \
     angr \
     pebble \
     r2pipe \
-    poetry && \
-    /pip_venv/bin/pip install --no-cache-dir LibcSearcher && \
-    cd / && \
-    git clone https://github.com/pwndbg/pwndbg /opt/pwndbg && \
-    cd /opt/pwndbg && chmod +x setup.sh && ./setup.sh && \
-    cd / && \
-    git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb && \
-      # GDB Configuration using echo for better compatibility
-    echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
+    poetry
+
+# Step 4.4: Install LibcSearcher from PyPI
+RUN /pip_venv/bin/pip install --no-cache-dir LibcSearcher
+
+# Step 4.5: Install Pwndbg. Its setup script is complex and can fail.
+RUN git clone https://github.com/pwndbg/pwndbg /opt/pwndbg && \
+    cd /opt/pwndbg && \
+    ./setup.sh
+
+# Step 4.6: Install Pwngdb
+RUN git clone --depth 1 https://github.com/scwuaptx/Pwngdb.git /opt/Pwngdb
+
+# Step 4.7: Configure GDB and set final permissions
+RUN echo 'source /opt/pwndbg/gdbinit.py' > /root/.gdbinit && \
     echo 'source /opt/Pwngdb/pwngdb.py' >> /root/.gdbinit && \
     echo 'source /opt/Pwngdb/angelheap/gdbinit.py' >> /root/.gdbinit && \
     echo 'define hook-run' >> /root/.gdbinit && \
     echo 'python import angelheap' >> /root/.gdbinit && \
     echo 'end' >> /root/.gdbinit && \
-    # Final setup and permissions
     cp /root/.gdbinit /home/zpwn/.gdbinit && \
     chown zpwn:zpwn /home/zpwn/.gdbinit && \
-          chmod -R 755 /glibc && \
+    chmod -R 755 /glibc && \
     mkdir -p /ctf/work && \
     chown -R zpwn:zpwn /ctf
 
