@@ -69,6 +69,62 @@ bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft=
 # Enable mouse drag to select and copy
 bind -n DragBorder if-shell -Ft= '#{mouse_any_flag}' "send-keys -M" "copy-mode -eM"
 EOF
+    # Configure vim with Chinese encoding support
+    cat > /home/zpwn/.vimrc << 'EOF'
+" Vim configuration with Chinese encoding support
+" Set encoding
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,gbk,gb2312,gb18030,big5
+
+" Display settings
+set ambiwidth=double
+set formatoptions+=mM
+set nobackup
+set noswapfile
+
+" Syntax highlighting
+syntax on
+set hlsearch
+set incsearch
+
+" Line numbers
+set number
+set relativenumber
+
+" Indentation
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smarttab
+
+" Visual settings
+set ruler
+set laststatus=2
+set showcmd
+set wildmenu
+set wildmode=list:longest
+
+" Chinese specific settings
+set guifont=Courier\ New:h12
+if has('gui_running')
+    set guioptions+=a
+endif
+EOF
+    cp /home/zpwn/.vimrc /root/.vimrc && \
+    chown zpwn:zpwn /home/zpwn/.vimrc && \
+    # Create global vim configuration for all users
+    cat > /etc/vim/vimrc.local << 'EOF'
+" Global vim configuration for Chinese encoding support
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,gbk,gb2312,gb18030,big5
+set ambiwidth=double
+EOF
     cp /home/zpwn/.tmux.conf /root/.tmux.conf && \
     echo "#!/bin/sh\nservice ssh restart\nsleep infinity" > /root/start.sh && \
     chmod +x /root/start.sh

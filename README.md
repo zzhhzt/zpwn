@@ -8,6 +8,7 @@
 - **Python工具**: pwntools, ropper, z3-solver, angr 等
 - **Ruby工具**: one_gadget, seccomp-tools
 - **调试器**: gdb-multiarch + pwndbg + Pwngdb
+- **编辑器**: Vim (已配置中文编码支持)
 - **终端复用**: tmux (已启用鼠标支持)
 - **多版本glibc**: 2.19-2.36 (32/64位)
 - **环境**: Zsh + Oh-My-Zsh, Python虚拟环境
@@ -101,6 +102,26 @@ ssh root@localhost -p 2222
 ```
 
 ### 工具使用示例
+
+#### Vim编辑器 (已配置中文编码支持)
+```bash
+# Vim已预配置支持中文文件
+vim 中文文件.txt
+
+# 支持的编码格式：
+# - UTF-8 (默认)
+# - GBK/GB2312
+# - GB18030
+# - Big5
+
+# Vim配置特性：
+# - 自动检测文件编码
+# - 语法高亮
+# - 行号显示
+# - 智能缩进
+# - 搜索高亮
+# - 中文字符正确显示
+```
 
 #### tmux终端复用器 (已启用鼠标支持)
 ```bash
@@ -235,5 +256,7 @@ docker run -d -p 2222:22 \
 - 📖 [Docker Compose 使用指南](Docker-Compose-使用指南.md) - 详细的Docker Compose配置和使用说明
 - 📋 [CTF Pwn Docker 分析报告](CTF_Pwn_Docker_Analysis.md) - 安全分析和优化建议
 - 📝 [优化总结](优化总结.md) - 构建优化效果总结
+- 📝 [RUN指令优化总结](RUN指令优化总结.md) - Dockerfile深度优化技术总结
+- 🔤 [Vim中文配置说明](Vim中文配置说明.md) - Vim中文编码配置和使用指南
 
 如有问题或建议，请提交Issue或Pull Request。
