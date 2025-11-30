@@ -53,7 +53,7 @@ echo "2. 挂载工作目录:"
 echo "   docker run -d -p 2222:22 -v \$(pwd)/workspace:/ctf/work --name ctf-pwn ctf-pwn"
 echo
 echo "3. 连接SSH:"
-echo "   ssh zpwn@localhost -p 2222  # 默认密码: zzh234234"
+echo "   ssh zpwn@localhost -p 2222  # 默认密码: 123456"
 echo
 
 # 创建测试工作目录

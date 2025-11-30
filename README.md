@@ -52,7 +52,7 @@ docker run -d -p 2222:22 \
 
 # 连接到容器
 ssh zpwn@localhost -p 2222
-# 默认密码: zzh234234 (或你设置的密码)
+# 默认密码: 123456 (或你设置的密码)
 ```
 
 ## 容器内使用
@@ -61,9 +61,11 @@ ssh zpwn@localhost -p 2222
 ```bash
 # 连接zpwn用户
 ssh zpwn@localhost -p 2222
+# 默认密码: 123456
 
 # 连接root用户
 ssh root@localhost -p 2222
+# 默认密码: 123456
 ```
 
 ### 工具使用示例
@@ -106,8 +108,8 @@ Python虚拟环境已自动激活，所有Python工具都已安装在其中。
 
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `ROOT_PASSWORD` | `zzh234234` | root用户密码 |
-| `ZPWN_PASSWORD` | `zzh234234` | zpwn用户密码 |
+| `ROOT_PASSWORD` | `123456` | root用户密码 |
+| `ZPWN_PASSWORD` | `123456` | zpwn用户密码 |
 
 ## 安全注意事项
 

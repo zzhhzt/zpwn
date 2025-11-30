@@ -3,8 +3,8 @@ FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Password arguments (can be overridden during build)
-ARG ROOT_PASSWORD=zzh234234
-ARG ZPWN_PASSWORD=zzh234234
+ARG ROOT_PASSWORD=123456
+ARG ZPWN_PASSWORD=123456
 
 # 0. Global Environment Settings
 ENV TZ=Asia/Shanghai
